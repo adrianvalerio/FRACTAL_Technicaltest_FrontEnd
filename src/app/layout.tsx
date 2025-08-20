@@ -1,5 +1,6 @@
 import type React from "react"
 import { Geist, Manrope } from "next/font/google"
+import Link from "next/link"
 import "./globals.css"
 
 const geist = Geist({
@@ -29,15 +30,15 @@ export default function RootLayout({
                         <h1 className="text-xl font-bold text-primary font-sans">Order Management System</h1>
                     </div>
                     <div className="flex items-center space-x-4">
-                        <a href="/my-orders" className="text-foreground hover:text-primary transition-colors">
+                        <Link href="/my-orders" className="text-foreground hover:text-primary transition-colors">
                             My Orders
-                        </a>
-                        <a
+                        </Link>
+                        <Link
                             href="/add-order"
                             className="bg-primary text-primary-foreground px-4 py-2 rounded-md hover:bg-accent transition-colors"
                         >
                             Add Order
-                        </a>
+                        </Link>
                     </div>
                 </div>
             </div>
