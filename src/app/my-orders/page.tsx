@@ -28,31 +28,13 @@ export default function MyOrdersPage() {
             setOrders(ordersData)
         } catch (error) {
             console.error("Error loading orders:", error)
-            // For demo purposes, use mock data if API fails
-            setOrders([
-                {
-                    id: "1",
-                    orderNumber: "ORD-001",
-                    date: "2024-01-15",
-                    products: [],
-                    totalProducts: 3,
-                    finalPrice: 299.99,
-                    status: "Pending",
-                },
-                {
-                    id: "2",
-                    orderNumber: "ORD-002",
-                    date: "2024-01-14",
-                    products: [],
-                    totalProducts: 1,
-                    finalPrice: 99.99,
-                    status: "InProgress",
-                },
-            ])
+            setOrders([]) // <-- solo vacío si falla
+            // opcional: mostrar mensaje al usuario
         } finally {
             setLoading(false)
         }
     }
+
 
     const handleDeleteOrder = async (orderId: string) => {
         try {
