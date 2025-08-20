@@ -1,8 +1,8 @@
-// API Service Layer following DDD principles
+// api.ts
 
 import type { Order, Product, CreateOrderRequest, UpdateOrderRequest } from "./types"
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001/api"
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3002/api"
 
 class ApiService {
     private async request<T>(endpoint: string, options?: RequestInit): Promise<T> {
@@ -15,10 +15,10 @@ class ApiService {
         })
 
         if (!response.ok) {
-            throw new Error(`API Error: ${response.statusText}`)
+            throw new Error(`API Error: ${response.status} ${response.statusText}`)
         }
 
-        return response.json()
+            return response.json()
     }
 
     // Orders
@@ -30,7 +30,7 @@ class ApiService {
         return this.request<Order>(`/orders/${id}`)
     }
 
-    async createOrder(order: { orderNumber: string; products: Product[]; total: number }): Promise<Order> {
+    async createOrder(order: CreateOrderRequest): Promise<Order> {
         return this.request<Order>("/orders", {
             method: "POST",
             body: JSON.stringify(order),
