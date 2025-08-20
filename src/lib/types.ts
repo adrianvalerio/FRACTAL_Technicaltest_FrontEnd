@@ -7,29 +7,22 @@ export interface Product {
 export interface OrderProduct {
     id: string
     productId: string
-    product: Product
     quantity: number
     totalPrice: number
+    product: Product
 }
 
 export interface Order {
     id: string
     orderNumber: string
     date: string
-    products: OrderProduct[]
     totalProducts: number
     finalPrice: number
-    status: "Pending" | "InProgress" | "Completed"
+    status: string
+    products: OrderProduct[]
 }
 
 export interface CreateOrderRequest {
     orderNumber: string
-    products: {
-        productId: string
-        quantity: number
-    }[]
-}
-
-export interface UpdateOrderRequest extends CreateOrderRequest {
-    id: string
+    products: { productId: string; quantity: number }[]
 }
