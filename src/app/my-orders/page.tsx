@@ -155,7 +155,7 @@ export default function MyOrdersPage() {
                                 <td className="px-6 py-4 whitespace-nowrap">
                                     <select
                                         value={order.status}
-                                        onChange={(e) => handleStatusChange(order.id, e.target.value as any)}
+                                        onChange={(e) => handleStatusChange(order.id, e.target.value as "Pending" | "InProgress" | "Completed")}
                                         disabled={order.status === "Completed"}
                                         className={`px-2 py-1 rounded-full text-xs font-medium border-0 ${getStatusColor(order.status)} ${
                                             order.status === "Completed" ? "cursor-not-allowed opacity-75" : "cursor-pointer"
