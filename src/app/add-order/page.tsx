@@ -1,17 +1,18 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { useParams, useRouter } from 'next/navigation'
-import { Order, Product } from '@/lib/types'
+import { useRouter } from 'next/navigation'
+import { Product } from '@/lib/types'
 import { apiService } from '@/lib/api'
 
+type SelectedProduct = Product & { quantity: number }
+
 export default function AddOrderPage() {
-    const params = useParams()
     const router = useRouter()
     const [products, setProducts] = useState<Product[]>([])
-    const [selectedProducts, setSelectedProducts] = useState<Product[]>([])
+    const [selectedProducts, setSelectedProducts] = useState<SelectedProduct[]>([])
     const [isLoading, setIsLoading] = useState(true)
-    const [orderNumber, setOrderNumber] = useState(Date.now().toString())
+    const [orderNumber] = useState(Date.now().toString())
 
     useEffect(() => {
         const loadProducts = async () => {
@@ -20,7 +21,6 @@ export default function AddOrderPage() {
                 setProducts(data)
             } catch (error) {
                 console.error('Error loading products:', error)
-                // Usar datos mock en caso de error
                 setProducts([
                     { id: '1', name: 'Producto 1', unitPrice: 100 },
                     { id: '2', name: 'Producto 2', unitPrice: 200 },
@@ -33,20 +33,49 @@ export default function AddOrderPage() {
         loadProducts()
     }, [])
 
+    const addProduct = (product: Product) => {
+        const existing = selectedProducts.find(p => p.id === product.id)
+        if (existing) {
+            // Si ya existe, incremento cantidad
+            setSelectedProducts(selectedProducts.map(p =>
+                p.id === product.id ? { ...p, quantity: p.quantity + 1 } : p
+            ))
+        } else {
+            // Si no existe, lo agrego con cantidad 1
+            setSelectedProducts([...selectedProducts, { ...product, quantity: 1 }])
+        }
+    }
+
+    const updateQuantity = (productId: string, quantity: number) => {
+        if (quantity <= 0) {
+            // si baja a 0, lo eliminamos de la lista
+            setSelectedProducts(selectedProducts.filter(p => p.id !== productId))
+        } else {
+            setSelectedProducts(selectedProducts.map(p =>
+                p.id === productId ? { ...p, quantity } : p
+            ))
+        }
+    }
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
         try {
             const orderData = {
                 orderNumber,
-                products: selectedProducts,
-                total: selectedProducts.reduce((sum, product) => sum + product.unitPrice, 0)
+                products: selectedProducts.map((product) => ({
+                    productId: product.id,
+                    quantity: 1,
+                })),
             }
+
+            console.log("[DEBUG FRONT] Enviando orderData:", orderData)
+
             await apiService.createOrder(orderData)
             router.push('/my-orders')
         } catch (error) {
             console.error('Error creating order:', error)
         }
     }
+
 
     if (isLoading) {
         return <div>Cargando...</div>
@@ -62,8 +91,8 @@ export default function AddOrderPage() {
                         {products.map((product) => (
                             <div
                                 key={product.id}
-                                className="border p-4 rounded-lg cursor-pointer"
-                                onClick={() => setSelectedProducts([...selectedProducts, product])}
+                                className="border p-4 rounded-lg cursor-pointer hover:bg-gray-50"
+                                onClick={() => addProduct(product)}
                             >
                                 <h3 className="font-medium">{product.name}</h3>
                                 <p className="text-gray-600">${product.unitPrice}</p>
@@ -75,16 +104,28 @@ export default function AddOrderPage() {
                 <div className="mb-6">
                     <h2 className="text-xl font-semibold mb-4">Productos Seleccionados</h2>
                     <div className="space-y-2">
-                        {selectedProducts.map((product, index) => (
-                            <div key={index} className="flex justify-between items-center border p-2 rounded">
+                        {selectedProducts.map((product) => (
+                            <div key={product.id} className="flex justify-between items-center border p-2 rounded">
                                 <span>{product.name}</span>
-                                <span>${product.unitPrice}</span>
+                                <div className="flex items-center gap-2">
+                                    <input
+                                        type="number"
+                                        min={1}
+                                        value={product.quantity}
+                                        onChange={(e) => updateQuantity(product.id, parseInt(e.target.value))}
+                                        className="w-16 border rounded text-center"
+                                    />
+                                    <span className="w-20 text-right">
+                                        ${(product.unitPrice * product.quantity).toFixed(2)}
+                                    </span>
+                                </div>
                             </div>
                         ))}
                     </div>
                     <div className="mt-4 text-right">
                         <p className="font-bold">
-                            Total: ${selectedProducts.reduce((sum, product) => sum + product.unitPrice, 0)}
+                            Total: $
+                            {selectedProducts.reduce((sum, product) => sum + product.unitPrice * product.quantity, 0).toFixed(2)}
                         </p>
                     </div>
                 </div>

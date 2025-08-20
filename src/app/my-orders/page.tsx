@@ -6,7 +6,7 @@ import type { Order } from "@/lib/types"
 import { apiService } from "@/lib/api"
 import { Button } from "@/components/ui/button"
 import { ConfirmationModal } from "@/components/ui/confirmation-modal"
-import { Edit, Trash2, Plus } from "lucide-react"
+import { Trash2, Plus } from "lucide-react"
 
 export default function MyOrdersPage() {
     const [orders, setOrders] = useState<Order[]>([])
@@ -168,16 +168,6 @@ export default function MyOrdersPage() {
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                     <div className="flex space-x-2">
-                                        <Button
-                                            variant="outline"
-                                            size="sm"
-                                            onClick={() => router.push(`/add-order/${order.id}`)}
-                                            disabled={order.status === "Completed"}
-                                            className="flex items-center gap-1"
-                                        >
-                                            <Edit className="h-3 w-3" />
-                                            Edit
-                                        </Button>
                                         <Button
                                             variant="destructive"
                                             size="sm"
