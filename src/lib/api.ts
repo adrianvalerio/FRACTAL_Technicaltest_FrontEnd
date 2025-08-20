@@ -1,6 +1,6 @@
 // api.ts
 
-import type { Order, Product, CreateOrderRequest, UpdateOrderRequest } from "./types"
+import type { Order, Product, CreateOrderRequest } from "./types"
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3002/api"
 
@@ -37,8 +37,8 @@ class ApiService {
         })
     }
 
-    async updateOrder(order: UpdateOrderRequest): Promise<Order> {
-        return this.request<Order>(`/orders/${order.id}`, {
+    async updateOrder(id: string, order: Partial<Order>): Promise<Order> {
+        return this.request<Order>(`/orders/${id}`, {
             method: "PUT",
             body: JSON.stringify(order),
         })
