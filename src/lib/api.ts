@@ -2,7 +2,8 @@
 
 import type { Order, Product, CreateOrderRequest } from "./types"
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3002/api"
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "https://fractal-technicaltest-backend.onrender.com"
+
 
 class ApiService {
     private async request<T>(endpoint: string, options?: RequestInit): Promise<T> {
